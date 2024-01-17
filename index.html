@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/main.css">
+    <title>Szyfr Poego</title>
+</head>
+<body>
+    <h1>Szyfr Poego</h1>
+    
+    <div class="options">
+        <button id="encrypt">Szyfruj</button>
+        <button id="decrypt">Deszyfruj</button>
+    </div>
+    
+    <input id="inputText" placeholder="Wprowadź tekst do zaszyfrowania..."></input>
+    
+    <div class="result">
+        <p>Wynik:</p>
+        <input id="outputText" readonly></input>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+
+</html>
+
+
+<script>
+    const encryptButton = document.getElementById("encrypt");
+    const decryptButton = document.getElementById("decrypt");
+    const inputText = document.getElementById("inputText");
+
+    const apiUrl = "https://hdjmgjj7cxpes7dwf3wd3y4zqi0uomnp.lambda-url.eu-west-1.on.aws/";
+
+    async function apiCall(method, text_to_encrypt) {
+        console.log(text_to_encrypt)
+        const encryptedText = await fetch(apiUrl + method, {
+            method: "POST",
+            body: JSON.stringify({ "text": text_to_encrypt })
+
+        }).then(response => response.json());
+
+        return encryptedText;
+    }
+    
+    encryptButton.addEventListener("click", async () => {
+        const textToEncrypt = inputText.value;
+        const encryptedText = await apiCall("cipher", textToEncrypt);
+
+        document.getElementById("outputText").value = encryptedText.text;
+    });
+
+    decryptButton.addEventListener("click", async () => {
+        const textToDecrypt = inputText.value;
+        const decryptedText = await apiCall("decipher", textToDecrypt);
+
+        document.getElementById("outputText").value = decryptedText.text;
+    });
+
+</script>
